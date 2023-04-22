@@ -16,6 +16,15 @@ decision_tree_accuracies = []
 decision_stump_accuracies = []
 dt3_accuracies = []
 
+classifiers = {
+    'Decision Tree': tree.DecisionTreeClassifier(),
+    'Decision Stump': tree.DecisionTreeClassifier(max_depth=1),
+    '3-level Decision Tree': tree.DecisionTreeClassifier(max_depth=3)
+}
+
+# Initialize array to store learning curve data
+learning_curve_data = {name: [] for name in classifiers.keys()}
+
 # Perform 100 trials
 for trial in range(100):
     # shuffle the data
@@ -31,7 +40,7 @@ for trial in range(100):
     current_dt3_accuracies = []
 
     # 10-fold cross-validation
-    fold_size = n //10
+    fold_size = n // 10
     for i in range(10):
         # Test
         X_test = X[i * fold_size:(i + 1) * fold_size]
@@ -83,6 +92,52 @@ for trial in range(100):
     decision_tree_accuracies.append(np.mean(current_decision_tree_accuracies))
     decision_stump_accuracies.append(np.mean(current_decision_stump_accuracies))
     dt3_accuracies.append(np.mean(current_dt3_accuracies))
+
+accuracies = {'Decision Tree':decision_tree_accuracies,
+              'Decision Stump':decision_stump_accuracies,
+              '3-Level Decision Tree':dt3_accuracies}
+
+# Calculate mean and standard deviation for accuracy and learning curve data
+stats = {name: (np.mean(acc), np.std(acc)) for name, acc in accuracies.items()}
+
+# With error bars
+# Calculate mean and standard deviation for each learning curve data point
+# learning_curve_stats = {}
+# for name, data in learning_curve_data.items():
+#     means = [np.mean(percent_data) for percent_data in data]
+#     std_devs = [np.std(percent_data) for percent_data in data]
+#     learning_curve_stats[name] = (means, std_devs)
+#
+# # Plot the learning curve with shaded error regions
+# plt.figure()
+# for name, (means, std_devs) in learning_curve_stats.items():
+#     x = range(10, 101, 10)
+#     plt.plot(x, means, label=name)
+#     plt.fill_between(x, np.array(means) - np.array(std_devs), np.array(means) + np.array(std_devs), alpha=0.2)
+#
+# plt.xlabel('Percentage of training data')
+# plt.ylabel('Accuracy')
+# plt.title('Learning Curves')
+# plt.legend()
+# plt.show()
+
+# Without error bars
+learning_curve_means = {}
+for name, data in learning_curve_data.items():
+    means = [np.mean(percent_data) for percent_data in data]
+    learning_curve_means[name] = means
+
+# Plot the learning curve without error bars
+plt.figure()
+for name, means in learning_curve_means.items():
+    x = range(10, 101, 10)
+    plt.plot(x, means, label=name)
+
+plt.xlabel('Percentage of training data')
+plt.ylabel('Accuracy')
+plt.title('Learning Curves')
+plt.legend()
+plt.show()
 
 # Calculate mean and standard deviation for each classifier
 mean_decision_tree_accuracy = np.mean(decision_tree_accuracies)

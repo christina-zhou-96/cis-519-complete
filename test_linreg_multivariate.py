@@ -49,6 +49,6 @@ if __name__ == "__main__":
 
     # Compute the closed form solution in one line of code
     thetaClosedForm = 0  # TODO:  replace "0" with closed form solution
-    print "thetaClosedForm: ", thetaClosedForm
+    print("thetaClosedForm: ", thetaClosedForm)
 
 
